@@ -11,24 +11,17 @@ function Article (rawDataObj) {
   this.publishedOn = rawDataObj.publishedOn;
 }
 
-Article.prototype.toHtml = function() {
+Article.prototype.toHtml = function(i) {
 
   // : Use Handlebars to render your articles. Get your template from the DOM and "compile" your template with Handlebars.
+
+  let source = document.getElementById("article-template").innerHTML;
+  let template = Handlebars.compile(source);
 
   // REVIEW: If your template will use properties that aren't on the object yet, add them.
   // Since your template can't hold any JS logic, we need to execute the logic here.
   // The result is added to the object as a new property, which can then be referenced by key in the template.
   // For example, you might want to display how old a post is, or say "(draft)" if it has no publication date:
-
-
-
-  function renderHandlebars(data, template, target) {
-    let compiledTemplate = Handlebars.compile( $(template).html() );
-    data.forEach( element => {
-      $(target).append( compiledTemplate(element) );
-    });
-  }
-
 
   this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
 
@@ -42,7 +35,9 @@ Article.prototype.toHtml = function() {
   // }
 
   // : Use the method that Handlebars gave you to return your filled-in html template for THIS article.
-  renderHandlebars(rawData, '#article-template', '#articles');
+
+  let html = template(articles[i]);
+  return html;
 };
 
 // : Why are there parentheses around "(a,b)" in the .sort() method, but not around the "articleObject" or "article" arguments in the .forEach() methods?
@@ -55,6 +50,6 @@ rawData.forEach(articleObject => {
   articles.push(new Article(articleObject));
 });
 
-articles.forEach(article => {
-  $('#articles').append(article.toHtml());
-});
+for(let i = 0; i < articles.length; i++) {
+  $('#articles').append(articles[i].toHtml(i));
+}
